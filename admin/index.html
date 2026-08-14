@@ -12989,11 +12989,7 @@
 							return;
 						}
 						if (state.networkChecking) return;
-						if (!await ensureCnNetworkBeforeAction({
-							button: els.latencyBtn,
-							statusEl: els.latencyStatus,
-							idleHtml: `${svgPulseIcon()}优选延迟`
-						})) return;
+						// 非 CN 出口也允许测速(自托管中继场景),不再强制网络验证
 						startLatencyRun();
 					});
 					if (els.speedAllBtn) {
@@ -13003,11 +12999,7 @@
 								return;
 							}
 							if (state.networkChecking) return;
-							if (!await ensureCnNetworkBeforeAction({
-								button: els.speedAllBtn,
-								statusEl: els.speedStatus,
-								idleHtml: `${svgBoltIcon()}全部测速`
-							})) return;
+							// 非 CN 出口也允许测速(自托管中继场景),不再强制网络验证
 							startAllSpeedTests();
 						});
 					}
