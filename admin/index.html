@@ -13288,23 +13288,8 @@
 				}
 
 				function confirmNetworkWarning() {
-					if (window.parent && window.parent !== window) {
-						try {
-							window.parent.location.reload();
-							return;
-						} catch (error) {
-							// Fall back to postMessage below when direct parent access is unavailable.
-						}
-
-						try {
-							window.parent.postMessage({ type: "bestcf-force-reload" }, "*");
-							return;
-						} catch (error) {
-							// Ignore and reload the current document as a last resort.
-						}
-					}
-
-					window.location.reload();
+					// 仅关闭警告层，允许用户进入优选界面继续操作（即使网络检测未通过）
+					els.networkWarningOverlay.classList.remove("is-visible");
 				}
 
 				async function detectStack(family, host) {
@@ -13465,7 +13450,8 @@
 				function updateLibraryOptions() {
 					const selectedKey = preferredLibraryKey();
 					const families = new Set(availableFamilies());
-					const options = IP_LIBRARIES.filter((item) => families.has(item.family));
+					// 网络检测失败时显示全部IP库，避免列表为空
+					const options = families.size ? IP_LIBRARIES.filter((item) => families.has(item.family)) : IP_LIBRARIES;
 					els.librarySelect.innerHTML = "";
 					if (!options.length) {
 						const option = document.createElement("option");
@@ -13501,14 +13487,13 @@
 				}
 
 				function updateActionAvailability() {
-					const hasService = availableFamilies().length > 0;
+					// 网络检测失败时也允许发起测速，交由测速过程自行报错
 					const latencyActive = Boolean(state.latencyRun);
 					const speedActive = Boolean(state.speedRun);
-					els.latencyBtn.disabled = state.networkChecking || speedActive || (!hasService && !latencyActive);
+					els.latencyBtn.disabled = state.networkChecking || speedActive;
 					if (els.speedAllBtn) {
 						els.speedAllBtn.disabled = state.networkChecking ||
 							latencyActive ||
-							(!hasService && !speedActive) ||
 							(state.results.length === 0 && !speedActive);
 					}
 				}
