@@ -13357,7 +13357,8 @@
 					}
 
 					if (!info.allowed) {
-						card.classList.add("is-hidden");
+						// 非 CN 出口也保留线路卡片展示状态(不隐藏)
+						card.classList.remove("is-hidden");
 						card.classList.add("is-unavailable");
 						value.textContent = "不可用";
 						if (note) note.textContent = "非CN网络";
